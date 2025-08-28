@@ -36,17 +36,17 @@ def read_photon_counts(filename):
 #----------------------------------------
 
 # File paths (adjust as needed)
-dark_counts_file = 'QRNG2/after-polishing-SPAD2/DCR_5Ve_lowT_1s_50us.csv'
+dark_counts_file = '../QRNG2/after-polishing-SPAD2/DCR_5Ve_lowT_1s_50us.csv'
 bright_counts_files = [
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-refwg.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out1.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out2.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out3.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out4.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out5.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out6.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out7.csv',
-    'QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out8.csv'
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-refwg.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out1.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out2.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out3.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out4.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out5.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out6.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out7.csv',
+    '../QRNG2/after-polishing-SPAD2/CR_5Ve_lowT_1s_50us-out8.csv'
 ]
 
 # Read dark counts once and compute their mean
@@ -56,7 +56,7 @@ mean_dark_count = np.mean(dark_counts)
 # Detector parameters
 t_holdoff = 50e-6   # hold-off time (seconds)
 pde = 0.225          # photon detection efficiency
-time_scale_factor = 1 / 10000  # Converts counts/s to counts/ms
+time_scale_factor = 1 / 1000  # Converts counts/s to counts/ms
 
 # Process each bright file and store (normalized counts, mean, file label)
 combined_data = []
@@ -115,24 +115,29 @@ for i, (data, mean_val, file_label) in enumerate(combined_data):
         scaling = 1.0
     counts_scaled = counts * scaling
     # Determine a bar width (in the normalized x-scale)
-    bar_width = 0.9 * (bins[1] - bins[0]) / (bin_centers.max() - bin_centers.min())
+    bar_width = 1.0 * (bins[1] - bins[0]) / (bin_centers.max() - bin_centers.min())
     
     # Plot the histogram as vertical bars
-    plt.bar(x_values, counts_scaled, width=bar_width, align='center', alpha=0.6, label=file_label)
+    if i == 0:
+        label = 'Reference'
+    else:
+        label = f'Port {i}'
+    plt.bar(x_values, counts_scaled, width=bar_width, align='center', alpha=0.8, 
+            edgecolor='black', linewidth=0.5, label=label)
     
     # Annotate the distribution with its mean photon count (placed at the center of its x slot)
     x_annotation = i * delta_x + 0.5  # adjust as needed
-    y_annotation = np.max(counts_scaled) * 1.01  # a little above the peak
-    plt.text(x_annotation, y_annotation, f"Mean: {mean_val:.1f}", ha='center', fontsize=14)
+    y_annotation = np.max(counts_scaled) * 1.02  # a little above the peak
+    plt.text(x_annotation, y_annotation, f"$\\langle n \\rangle$: {mean_val:.1f}", ha='center', fontsize=12)
 
 random_number_list=['Ref', '000','001','010','100','011','101','110', '111']
-plt.xlabel('Photon count distributions', fontsize=20)
-plt.ylabel('Mean photon count (counts/ms)',fontsize=20)
+plt.xlabel('Port-encoded bits', fontsize=20)
+plt.ylabel('Mean photon count $\\langle n \\rangle$ (counts/ms)',fontsize=20)
 #plt.title('Photon count distributions for each star coupler port')
 plt.xticks([i * delta_x + 0.5 for i in range(len(combined_data))],
            [d for d in random_number_list], rotation=45, fontsize=20)
 plt.yticks(fontsize=20)
-plt.legend()
+plt.legend(fontsize=16)
 plt.tight_layout()
 plt.savefig('combined_histograms_proportional_height.png', dpi=350)
 plt.show()
