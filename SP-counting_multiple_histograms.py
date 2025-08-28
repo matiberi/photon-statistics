@@ -127,17 +127,17 @@ for i, (data, mean_val, file_label) in enumerate(combined_data):
     
     # Annotate the distribution with its mean photon count (placed at the center of its x slot)
     x_annotation = i * delta_x + 0.5  # adjust as needed
-    y_annotation = np.max(counts_scaled) * 1.02  # a little above the peak
-    plt.text(x_annotation, y_annotation, f"$\\langle n \\rangle$: {mean_val:.1f}", ha='center', fontsize=12)
+    y_annotation = np.max(counts_scaled) * 1.01  # a little above the peak
+    plt.text(x_annotation, y_annotation, f"$\\langle n \\rangle$: {mean_val:.1f}", ha='center', fontsize=16)
 
 random_number_list=['Ref', '000','001','010','100','011','101','110', '111']
-plt.xlabel('Port-encoded bits', fontsize=20)
-plt.ylabel('Mean photon count $\\langle n \\rangle$ (counts/ms)',fontsize=20)
+plt.xlabel('Port-encoded bits', fontsize=22)
+plt.ylabel('Mean photon count $\\langle n \\rangle$ (counts/ms)',fontsize=22)
 #plt.title('Photon count distributions for each star coupler port')
 plt.xticks([i * delta_x + 0.5 for i in range(len(combined_data))],
-           [d for d in random_number_list], rotation=45, fontsize=20)
-plt.yticks(fontsize=20)
-plt.legend(fontsize=16)
+           [d for d in random_number_list], rotation=45, fontsize=22)
+plt.yticks(fontsize=22)
+plt.legend(fontsize=22)
 plt.tight_layout()
 plt.savefig('combined_histograms_proportional_height.png', dpi=350)
 plt.show()
